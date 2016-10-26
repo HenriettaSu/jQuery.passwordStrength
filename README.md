@@ -2,6 +2,10 @@
 
 簡單的密碼強度檢測插件。
 
+## DEMO
+
+[示例](http://henrie.pursuitus.com/adminTemplate/index.html)
+
 
 ## 使用
 
