@@ -1,6 +1,6 @@
 /*
  * passwordStrength
- * Version: 1.0.0
+ * Version: 1.1.0
  *
  * A simple plugin that can test the strength of password
  *
@@ -8,61 +8,86 @@
  *
  * License: MIT
  *
- * Released on: October 26, 2016
+ * Released on: November 21, 2016
  */
 
 $.fn.passwordStrength = function () {
     var ele = $(this);
-    ele.keyup(function () {
-        var $this = $(this),
-            val = $this.val(),
-            strength = 0,
-            number = /\d+/,
-            words = /[a-zA-Z]+/,
-            speChar = /[#@!~_\-%^&*\\\/]/,
-            len = /\S{12,}/,
-            same = /^(.)\1{2,}$/,
-            $progress = $this.parents('.password-box').find('.progress-bar');
-        if (val.match(number)) {
-            strength += 10;
-        }
-        if (val.match(words)) {
-            strength += 10;
-        }
-        if (val.match(speChar)) {
-            strength += 10;
-        }
-        if (val.match(len)) {
-            strength += 10;
-        }
-        if (val.match(same)) {
-            strength -= 10;
-        }
-        switch (strength) {
-            case 0:
-                $progress.css('width', '0');
-                $progress.attr('class', 'progress-bar bg-red');
-                break;
-            case 10:
-                $progress.css('width', '25%');
-                $progress.attr('class', 'progress-bar bg-red');
-                break;
-            case 20:
-                $progress.css('width', '50%');
-                $progress.attr('class', 'progress-bar bg-orange');
-                break;
-            case 30:
-                $progress.css('width', '75%');
-                $progress.attr('class', 'progress-bar bg-orange');
-                break;
-            case 40:
-                $progress.css('width', '100%');
-                $progress.attr('class', 'progress-bar bg-green');
-                break;
-            default:
-                $progress.css('width', '0');
-                $progress.attr('class', 'progress-bar');
-                break;
-        }
-    });
+    tester = new $.tester(ele);
+    return tester;
 }
+
+$.tester = function (ele) {
+    this.selector = ele;
+    this.init(ele);
+}
+
+$.extend($.tester, {
+    defaultRules: {
+        number: {
+            rule: /\d+/,
+            method: true
+        },
+        lowercase: {
+            rule: /[a-z]+/,
+            method: true
+        },
+        uppercase: {
+            rule: /[A-Z]+/,
+            method: true
+        },
+        speChar: {
+            rule: /[#@!~_\-%^&*()\\\/]/,
+            method: true
+        },
+        len: {
+            rule: /\S{12,}/,
+            method: true
+        },
+        same: {
+            rule: /^(.)\1{2,}$/,
+            method: false
+        }
+    },
+    prototype: {
+        init: function (ele) {
+            var rules = $.tester.defaultRules;
+            ele.keyup(function () {
+                var $this = $(this),
+                    val = $this.val(),
+                    strength = 0,
+                    scroe,
+                    per,
+                    $progress = $this.parents('.password-box').find('.progress-bar'),
+                    colorClass,
+                    i,
+                    rule,
+                    method,
+                    ruleLength = 0;
+                for (i in rules) {
+                    rule = rules[i].rule;
+                    method = rules[i].method;
+                    if (val.match(rule)) {
+                        strength += (method === true) ? 1 : -1;
+                    }
+                    ruleLength += (method === true) ? 1 : 0;
+                }
+                scroe = 100 / ruleLength;
+                per = strength * scroe;
+                colorClass = (per < 30) ? 'bg-red' : (per > 30 && per < 90) ? 'bg-orange' : 'bg-green';
+                $progress.css('width', per + '%');
+                $progress.attr('class', 'progress-bar ' + colorClass);
+            });
+        },
+        reset: function () {
+            var selector = this.selector,
+                $progress = $(selector).parents('.password-box').find('.progress-bar');
+            $(selector).val('');
+            $progress.css('width', '0');
+            $progress.attr('class', 'progress-bar');
+        }
+    },
+    addRules: function (settings) {
+        $.extend($.tester.defaultRules, settings);
+    }
+});

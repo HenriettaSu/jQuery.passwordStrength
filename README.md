@@ -1,6 +1,6 @@
-# passwordStrength plug-in for jQuery
+# passwordStrength plug-in for jQuery 1.1.0
 
-簡單的密碼強度檢測插件。
+簡單的密碼強度檢測插件。可通過API修改或添加強度判斷規則。
 
 ## DEMO
 
@@ -9,12 +9,50 @@
 
 ## 使用
 
-```js
-$(element).passwordStrength();
+```html
+<script src="vendor/jquery.min.js"></script>
+<script src="js/passwordStrength.js"></script>
+
+<div class="password-box">
+  <input id="newPassword" type="password">
+  <div class="password-progress">
+    <div class="progress-bar" style="width: 0%;"></div>
+  </div>
+</div>
 ```
 
-數字、字母、特殊字符、長度12位，每符合一種情況，強度上升一級。
+引入js文件並佈置好輸入框和強度條。
+
+```js
+var obj = $(element).passwordStrength();
+```
+
+為輸入框綁定passwordStrength()，並返回實例。
+
+數字、大寫字母、小寫、特殊字符、長度12位，每符合一種情況，強度上升一級。
 單一字符重複，強度下降一級。
+
+## API
+
+```js
+var rules = {
+    uppercase: {
+        rule: /[A-Z]+/,
+        method: true
+    }
+}
+
+$.tester.addRules(rules);
+```
+
+增加強度規則，需在創建實例前添加。
+
+
+```js
+obj.reset();
+```
+
+重置輸入框和強度條。
 
 
 ## 聯繫與討論
