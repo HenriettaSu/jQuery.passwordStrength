@@ -48,17 +48,11 @@
 <body>
   <div class="password-box">
     <input id="newPassword" type="password">
-    <button type="button" id="reset">清除</button>
-    <div class="password-progress">
-      <div class="progress-bar" style="width: 0%;"></div>
-    </div>
+    <button type="button" id="destroy">銷毀</button>
   </div>
   <div class="password-box">
     <input id="newPassword2" type="password">
-    <button type="button" id="reset2">清除</button>
-    <div class="password-progress">
-      <div class="progress-bar" style="width: 0%;"></div>
-    </div>
+    <button type="button" id="reset">清除</button>
   </div>
   <p>數字、大寫字母、小寫字母、特殊字符、長度12位，每符合一種情況，強度上升一級。單一字符重複，強度下降一級。</p>
 
@@ -70,19 +64,26 @@
         // $.tester.addRules({
         //     uppercase: {
         //         rule: /[A-Z]+/,
+        //         // method為true則加分，為false則是減分規則
         //         method: true
         //     }
         // });
 
         // 為輸入框綁定強度驗證並創建對象
-        var obj = $('#newPassword').passwordStrength();
+        var obj = $('#newPassword').passwordStrength(
+            // {gradeClass: {
+            //     bad: 'bg-blue',
+            //     pass: 'bg-blue',
+            //     good: 'bg-blue'
+            // }}
+        );
         var obj2 = $('#newPassword2').passwordStrength();
 
         // 重置輸入框和強度條
-        $('#reset').click(function () {
-            obj.reset();
+        $('#destroy').click(function () {
+            obj.destroy();
         });
-        $('#reset2').click(function () {
+        $('#reset').click(function () {
             obj2.reset();
         });
 	});

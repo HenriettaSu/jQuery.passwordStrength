@@ -1,6 +1,6 @@
 /*
  * passwordStrength
- * Version: 1.1.0
+ * Version: 1.2.0
  *
  * A simple plugin that can test the strength of password
  *
@@ -8,18 +8,19 @@
  *
  * License: MIT
  *
- * Released on: November 21, 2016
+ * Released on: November 22, 2016
  */
 
-$.fn.passwordStrength = function () {
+$.fn.passwordStrength = function (option) {
     var ele = $(this);
-    tester = new $.tester(ele);
+    settings = $.extend($.tester.defaultSettings, option);
+    tester = new $.tester(ele, settings);
     return tester;
 }
 
-$.tester = function (ele) {
+$.tester = function (ele, settings) {
     this.selector = ele;
-    this.init(ele);
+    this.init(ele, settings);
 }
 
 $.extend($.tester, {
@@ -49,16 +50,26 @@ $.extend($.tester, {
             method: false
         }
     },
+    defaultSettings: {
+        gradeClass: {
+            bad: 'bg-red',
+            pass: 'bg-orange',
+            good: 'bg-green'
+        }
+    },
     prototype: {
-        init: function (ele) {
-            var rules = $.tester.defaultRules;
-            ele.keyup(function () {
+        init: function (ele, settings) {
+            var rules = $.tester.defaultRules,
+                progress = '<div class="password-progress"><div class="progress-bar" style="width: 0%;"></div></div>',
+                $progressBox = ele.parents('.password-box');
+            $progressBox.append(progress);
+            ele.on('keyup.passwordStrength', function () {
                 var $this = $(this),
                     val = $this.val(),
+                    $progress = $this.parents('.password-box').find('.progress-bar'),
                     strength = 0,
                     scroe,
                     per,
-                    $progress = $this.parents('.password-box').find('.progress-bar'),
                     colorClass,
                     i,
                     rule,
@@ -68,13 +79,13 @@ $.extend($.tester, {
                     rule = rules[i].rule;
                     method = rules[i].method;
                     if (val.match(rule)) {
-                        strength += (method === true) ? 1 : -1;
+                        strength += (method === true) ? 1 : (method === false) ? -1 : 0;
                     }
                     ruleLength += (method === true) ? 1 : 0;
                 }
                 scroe = 100 / ruleLength;
                 per = strength * scroe;
-                colorClass = (per < 30) ? 'bg-red' : (per > 30 && per < 90) ? 'bg-orange' : 'bg-green';
+                colorClass = (per < 30) ? settings.gradeClass.bad : (per > 30 && per < 90) ? settings.gradeClass.pass : settings.gradeClass.good;
                 $progress.css('width', per + '%');
                 $progress.attr('class', 'progress-bar ' + colorClass);
             });
@@ -85,9 +96,16 @@ $.extend($.tester, {
             $(selector).val('');
             $progress.css('width', '0');
             $progress.attr('class', 'progress-bar');
+        },
+        destroy: function () {
+            var selector = this.selector,
+                $progress = $(selector).parents('.password-box').find('.password-progress');
+            $progress.remove();
+            selector.off('keyup.passwordStrength');
+            delete this.selector;
         }
     },
-    addRules: function (settings) {
-        $.extend($.tester.defaultRules, settings);
+    addRules: function (rules) {
+        $.extend($.tester.defaultRules, rules);
     }
 });

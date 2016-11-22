@@ -1,4 +1,4 @@
-# passwordStrength plug-in for jQuery 1.1.0
+# passwordStrength plug-in for jQuery 1.2.0
 
 簡單的密碼強度檢測插件。可通過API修改或添加強度判斷規則。
 
@@ -6,6 +6,11 @@
 
 [示例](http://henrie.pursuitus.com/adminTemplate/index.html)
 
+## 更新日誌
+
+1. 增加 `destroy()` 實例銷毀方法；
+2. 增加強度條樣式配置項；
+3. 優化HTML結構；
 
 ## 使用
 
@@ -15,9 +20,6 @@
 
 <div class="password-box">
   <input id="newPassword" type="password">
-  <div class="password-progress">
-    <div class="progress-bar" style="width: 0%;"></div>
-  </div>
 </div>
 ```
 
@@ -36,7 +38,7 @@ var obj = $(element).passwordStrength();
 
 ```js
 var rules = {
-    uppercase: {
+    rulesname: {
         rule: /[A-Z]+/,
         method: true
     }
@@ -45,7 +47,10 @@ var rules = {
 $.tester.addRules(rules);
 ```
 
-增加強度規則，需在創建實例前添加。
+修改或增加強度規則，需在創建實例前添加。
+
+- rule：驗證規則，正則表達式。
+- method：true為加分規則，false則為減分規則。
 
 
 ```js
@@ -54,6 +59,23 @@ obj.reset();
 
 重置輸入框和強度條。
 
+```js
+obj.destroy();
+```
+
+銷毀強度條，解除輸入框相關綁定。
+
+## Option
+
+```javascript
+gradeClass: {
+  bad: 'bg-red',
+  pass: 'bg-orange',
+  good: 'bg-green'
+}
+```
+
+強度條的顏色樣式，分三個等級，默認如上。
 
 ## 聯繫與討論
 
