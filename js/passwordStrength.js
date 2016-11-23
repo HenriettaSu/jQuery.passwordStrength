@@ -1,6 +1,6 @@
 /*
  * passwordStrength
- * Version: 1.2.0
+ * Version: 1.2.1
  *
  * A simple plugin that can test the strength of password
  *
@@ -59,14 +59,15 @@ $.extend($.tester, {
     },
     prototype: {
         init: function (ele, settings) {
-            var rules = $.tester.defaultRules,
-                progress = '<div class="password-progress"><div class="progress-bar" style="width: 0%;"></div></div>',
-                $progressBox = ele.parents('.password-box');
-            $progressBox.append(progress);
+            var eleName = ele.attr('name'),
+                rules = $.tester.defaultRules,
+                progress = '<div class="password-progress"><div data-name="' + eleName + '" class="progress-bar" style="width: 0%;"></div></div>',
+                $progress;
+            ele.after(progress);
+            $progress = $('.progress-bar[data-name="' + eleName + '"]');
             ele.on('keyup.passwordStrength', function () {
                 var $this = $(this),
                     val = $this.val(),
-                    $progress = $this.parents('.password-box').find('.progress-bar'),
                     strength = 0,
                     scroe,
                     per,
@@ -92,14 +93,16 @@ $.extend($.tester, {
         },
         reset: function () {
             var selector = this.selector,
-                $progress = $(selector).parents('.password-box').find('.progress-bar');
-            $(selector).val('');
+                eleName = $(selector[0]).attr('name'),
+                $progress = $('.progress-bar[data-name="' + eleName + '"]');
+            selector.val('');
             $progress.css('width', '0');
             $progress.attr('class', 'progress-bar');
         },
         destroy: function () {
             var selector = this.selector,
-                $progress = $(selector).parents('.password-box').find('.password-progress');
+                eleName = $(selector[0]).attr('name'),
+                $progress = $('.progress-bar[data-name="' + eleName + '"]').parent();
             $progress.remove();
             selector.off('keyup.passwordStrength');
             delete this.selector;

@@ -8,6 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>passwordStrength - demo</title>
   <style>
+    .mt-10 {
+        margin-top: 10px;
+    }
     .password-box {
       display: inline-block;
     }
@@ -47,12 +50,12 @@
 
 <body>
   <div class="password-box">
-    <input id="newPassword" type="password">
-    <button type="button" id="destroy">銷毀</button>
+    <input id="password" type="password" name="password">
+    <button type="button" id="destroy" class="mt-10">銷毀</button>
   </div>
   <div class="password-box">
-    <input id="newPassword2" type="password">
-    <button type="button" id="reset">清除</button>
+    <input id="passwort" type="password" name="passwort">
+    <button type="button" id="reset" class="mt-10">清除</button>
   </div>
   <p>數字、大寫字母、小寫字母、特殊字符、長度12位，每符合一種情況，強度上升一級。單一字符重複，強度下降一級。</p>
 
@@ -70,14 +73,14 @@
         // });
 
         // 為輸入框綁定強度驗證並創建對象
-        var obj = $('#newPassword').passwordStrength(
+        var obj = $('#password').passwordStrength(
             // {gradeClass: {
             //     bad: 'bg-blue',
             //     pass: 'bg-blue',
             //     good: 'bg-blue'
             // }}
         );
-        var obj2 = $('#newPassword2').passwordStrength();
+        var obj2 = $('#passwort').passwordStrength();
 
         // 重置輸入框和強度條
         $('#destroy').click(function () {
